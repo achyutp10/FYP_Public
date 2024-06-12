@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<style>
+  .container1 {
+    background-color: #E6E6FA;
+    border-radius: 16px;
+  }
+
+  .mydiv:hover {
+    transform: translateY(-10px);
+    transition: 1s;
+  }
+  .mydivs:hover {
+    transform: translateY(-10px);
+    transition: 1s;
+  }
+</style>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 px-5" style="background-color: #e5f1ff; height: 830px;"> 
+      <div class='text-center' style='margin-top: 80px;'>
+        <h2 class='fw-bold text-secondary'>Admin Panel</h2>
+        <h2 class='fw-bold text-secondary'>Dashboard</h2>
+      </div>
+
+      <div style='margin-top: 50px;'>
+        <select class="form-select rounded-0" style='border: 2px solid #070441; font-size: 20px;' id="exampleFormControlSelect1" onchange="location = this.value;">
+          <option value="Customer" selected hidden>Customer</option>
+          <option class='text-light' style='background-color: #070441;' value="{% url "adminCustomer" %}">Customer</option>
+          <option class='text-light' style='background-color: #070441;' value="{% url "adminTechnician" %}">Technician</option>
+          <option class='text-light' style='background-color: #070441;' value="{% url "adminBooking" %}">Bookings</option>
+        </select>
+      </div> 
+    </div>
+   
+    <div class="col-md-4">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-8 text-center mx-5" style='margin-top: 40px;'>
+            <div class="container1 mydiv">
+              <h2 class="text-dark p-2 fw-bold" style="background-color: #b2d4ab;">{{total_technicians}}</h2>
+              <a class='text-decoration-none' href="{% url "adminTechnician" %}"
+                ><h4 class="text-dark p-4 fw-bold">Total Technicians</h4></a
+              >
+            </div>
+            <div class="col-md-13 text-center mydivs mt-5">
+              <div class="container1">
+                <h2 class="text-dark p-2 fw-bold" style="background-color: #b2d4ab;">{{total_bookings}}</h2>
+                <a class='text-decoration-none' href="{% url "adminBooking" %}"
+                  ><h4 class="text-dark fw-bold p-4">Total Bookings</h4></a
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8 text-center mx-5" style='margin-top: 40px;'>
+            <div class="container1 mydiv">
+              <h2 class="text-dark p-2 fw-bold" style="background-color: #b2d4ab;">{{total_customers}}</h2>
+              <a class='text-decoration-none' href="{% url "adminCustomer" %}">
+                <h4 class="text-dark fw-bold p-4">Total Customer</h4>
+              </a></div>
+           
+            <div class="col-md-13 text-center mydivs mt-5">
+              <div class="container1">
+                <h2 class="text-dark p-2 fw-bold" style="background-color: #b2d4ab;">Rs. {{total_earnings}}</h2>
+                <a class='text-decoration-none' href=""
+                  ><h4 class="text-dark fw-bold p-4">Total Earnings</h4></a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mt-5">
+      <div class='p-4 border border-2 rounded mb-3'>
+        <canvas id="earningsChart" class='mb-3'></canvas>
+        <h5 style="background-color: #e5f1ff;" class='fw-bold text-dark p-2 text-center mb-2'>Graph Showing Earnings Over Time</h5>
+      </div>
+      <div class='p-4 border border-2 rounded mb-3'>
+        <canvas id="bookingLineChart" class='mb-3'></canvas>
+        <h5 style="background-color: #e5f1ff;" class='fw-bold text-dark p-2 text-center mb-2'>Line Graph Showing Bookings Over Month</h5>
+      </div>
+    </div>
+  
+      
+    </div>
+    
+  </div>
+</div>
+
+
+
+<script>
+  var earningsData = {
+      labels: [{% for item in earnings_data %}"{{ item.month|date:'F Y' }}",{% endfor %}],
+      datasets: [{
+          label: 'Earnings',
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1,
+          data: [{% for item in earnings_data %}{{ item.total_earnings }},{% endfor %}],
+      }]
+  };
+
+  var earningsOptions = {
+      scales: {
+          y: {
+              beginAtZero: true,
+              ticks: {
+                  callback: function(value, index, values) {
+                      return 'Rs.' + value;
+                  }
+              }
+          }
+      }
+  };
+
+  var earningsChartCanvas = document.getElementById('earningsChart').getContext('2d');
+  var earningsChart = new Chart(earningsChartCanvas, {
+      type: 'bar',
+      data: earningsData,
+      options: earningsOptions
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var bookingData = {{ booking_data|safe }};
+    
+    var months = bookingData.map(function(data) {
+        return data.month;
+    });
+    
+    var counts = bookingData.map(function(data) {
+        return data.count;
+    });
+
+    var ctx = document.getElementById('bookingLineChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Bookings per Month',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                data: counts,
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Bookings'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Month'
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+
+
+
+
+
+{% endblock %}

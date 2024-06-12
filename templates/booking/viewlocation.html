@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        #map {
+            margin-left: 15%;
+            height: 500px;
+            width: 70%;
+        }
+    </style>
+
+    <h2>Location</h2>
+    <div id="map"></div>
+    
+    <!-- Include Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <!-- JavaScript code -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize the map
+            var map = L.map('map').setView([26.5172, 87.3240], 8);
+
+            // Add the base map layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Fetch customer locations from the server
+            fetch('/accounts/technician/get_user_locations/') // Adjust the URL based on your Django routes
+                .then(response => response.json())
+                .then(data => {
+                    // Add markers for each customer location
+                    data.user_locations.forEach(function(location) {
+                        var marker = L.marker([location.latitude, location.longitude]).addTo(map);
+                        marker.bindPopup('<b>Customer:</b> ' + location.user__username + '<br><b>Address:</b> ' + location.address);
+                    });
+                })
+                .catch(error => console.error('Error fetching customer locations:', error));
+        });
+    </script>
+
+    {% include "includes/alerts.html" %}
+
+{% endblock %}

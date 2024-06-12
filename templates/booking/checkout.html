@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main>
+		<!-- Services -->
+		<section class="container my-4">
+			<h1 class="text-center mb-4 section-heading border-bottom pb-2">Checkout</h1>
+				<table class="table table-bordered">
+					<thead class="table-danger">
+						<tr>
+
+							<th>Payment of: {{bookings.user.first_name}} {{bookings.user.last_name}} </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<table class="table-bordered table">
+									<tr>
+										<th>Technician Name</th>
+										<td>{{bookings.technician.user.first_name}} {{bookings.technician.user.last_name}}</td>
+									</tr>
+									
+									<tr>
+										<th>Total Amount</th>
+                    <td> <h5 class="totalAmount fw-bold">Rs. {{bookings.technician.service_charge}}</h5></td>
+									</tr>
+                  <tr>
+                    <th>Payment</th>
+                    <td>
+                      <form method="post" action="{% url "checkout_session" bookings.id %}">
+                        {% csrf_token %}
+                        <input type="submit" value="Proceed to Payment" class="btn btn-success border-0 fw-bold" style='background-color: #070441' />
+                      </form>
+                    </td>
+                  </tr>
+                  
+								</table>
+							</td>
+						</tr>
+					</tbody>
+					
+				</table>
+		</section>
+		<!-- End -->
+    </main>
+
+
+
+{% endblock %}

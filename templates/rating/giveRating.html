@@ -1,0 +1,100 @@
+
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+   /* Hide radio buttons */
+.rating input[type="radio"] {
+  display: none;
+  
+}
+
+/* Style star labels */
+.rating label {
+  font-size: 40px; /* Adjust the size as needed */
+  color: rgb(255, 213, 0); /* Color of the stars */
+  cursor: pointer;
+  
+}
+
+/* Style for selected stars */
+.rating input[type="radio"]:checked + label i {
+color: #ff942d; /* Color of the selected stars */
+}
+
+</style>
+<body>
+
+<!-- Hero Section -->
+<div class="container-fluid">
+  <div class="row text-center" style="background-color: #e5f1ff; max-height: 400px; padding: 50px;">
+    <div class="col">
+      <img src="{{technician.user.profile_picture.url}}" alt="" class='rounded rounded-circle' style='height: 140px; width: 140px;'>
+      <h1 class="mb-3 fw-bold text-danger">{{technician.user.first_name}} {{technician.user.last_name}}</h1>
+      <h5 class='fw-bold fs-3'>Please give some suggestion and don’t forget to give
+        your valuable rating</h5>
+    </div>
+  </div>
+</div>
+
+<!-- Rating section -->
+<div class="container-fluid">
+<div class="row text-center" style="background-color: #f3e7e7; height: 450px; padding: 50px;">
+  <div class="col rounded" style="background-color: #ffffff; margin-top: 10px; margin-bottom: 10px; margin-left: 200px; margin-right: 200px;">
+    <div>
+      <form action="{% url 'giveRating' technician.id booking.id %}" method="post">
+        {% csrf_token %}
+        <!-- Star icons for rating input -->
+        <div class="rating mt-4 mb-3">
+          <input type="radio" id="star1" name="rating" value="1">
+          <label for="star1"><i class="fa-regular fa-star"></i></label>
+          <input type="radio" id="star2" name="rating" value="2">
+          <label for="star2"><i class="fa-regular fa-star"></i></label>
+          <input type="radio" id="star3" name="rating" value="3">
+          <label for="star3"><i class="fa-regular fa-star"></i></label>
+          <input type="radio" id="star4" name="rating" value="4">
+          <label for="star4"><i class="fa-regular fa-star"></i></label>
+          <input type="radio" id="star5" name="rating" value="5">
+          <label for="star5"><i class="fa-regular fa-star"></i></label>
+        </div>
+
+        <div>
+          <textarea class='rounded px-2 pt-3 fw-bold fs-4' rows="6" cols="50" placeholder="Suggestion or Feedback..." name="feedbacks" id="suggest_feedback"></textarea>
+        </div>
+
+        <button type='submit' class='btn btn-danger fw-bold mt-2'>Rate Now</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>  
+  // Get all radio buttons
+  const stars = document.querySelectorAll('input[type="radio"][name="rating"]');
+
+  // Add event listener to each radio button
+  stars.forEach(star => {
+    star.addEventListener('change', function() {
+      // Get the value of the checked radio button
+      const rating = this.value;
+      
+      // Color the stars up to the checked one
+      stars.forEach((star, index) => {
+        if (index < rating) {
+          star.nextElementSibling.style.color = '#ff942d'; // Color the star as black
+        } else {
+          star.nextElementSibling.style.color = ''; // Reset the color for unchecked stars
+        }
+      });
+    });
+  });
+
+
+</script>
+
+{% include "includes/alerts.html" %}
+
+{% endblock  %}

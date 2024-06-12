@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        #map {
+            height: 500px;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #6c757d;
+            border-color: #6c757d; 
+        }
+    </style>
+
+    <!-- Modal -->
+    <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mapModalLabel">Location Map</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row text-center" style="background-color: #e5f1ff; height: 250px; padding: 20px;">
+            <div class="col">
+                <img src="{{ user.profile_picture.url }}" alt="" class="rounded rounded-circle" style="height: 120px; width: 120px;">
+                <h2 class="mb-2 fw-bold text-danger">{{ user.first_name }} {{ user.last_name }}</h2>
+                <h5 class="fw-bold fs-3">Customer Bookings</h5>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-0 p-0">
+      <div class="row">
+          <div class="col-md-5" style="margin: 40px 0 0 700px;">
+            <form class="d-flex border border-dark border-2 rounded w-100">
+              <div class="input-group" style="padding: 1px; ">
+                <span class="input-group-prepend">
+                  <span class="input-group-text bg-white border-0"> 
+                    <i class="bi bi-search border-0" style="font-size: 1.3em;"></i>
+                  </span>
+                </span>
+                <input type="text" id="searchInput" class="form-control border-0 fw-bold fs-5" placeholder="Search Here" aria-label="Search">
+    
+              </div>       
+            </form>
+          </div>
+        </div>
+        </div>
+    <div class="container rounded mt-5" style='border-bottom: 2px solid #070441; border-left: 1px solid #070441; border-right: none; box-shadow: 0.3px 0 0 0 #070441;'>
+    
+        <table class="table table-borderless text-center" id="example">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Booking Date</th>
+                    <th>Status</th>
+                    <th>Phone No.</th>
+                    <th>Payment</th>
+                    <th>Chat</th>
+                    <th>Location</th>
+     
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in page_obj %}
+                <tr>
+                    <td>{{ booking.name }}</td>
+                    <td>{{ booking.booking_date|date:"Y-m-d" }}</td>
+                    <td><a href="{% url "changeStatus" booking.id %}" class="btn btn-success border-0 fw-bold" style='background-color: #070441;'>Assign</a></td>
+                    <td>{{ booking.phone_number }}</td>
+                    <td>{% if booking.is_paid %} Paid {% else %} Pending {% endif %}</td>
+                    <td><a href="{% url "messages_page" %}" style='color: #070441;'><i class="fa-regular fa-comment fa-2x mb-2"></i></a></td>
+                    <td><button type="button" class="btn btn-link open-map-modal" data-bs-toggle="modal" data-bs-target="#mapModal" data-latitude="{{ booking.latitude }}" data-longitude="{{ booking.longitude }}">
+                        <i class="fa-solid fa-location-dot" style='color: #070441;'></i>
+                    </button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+  <div class="container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+            {% if page_obj.has_previous %}
+                <li class="page-item m-1 border border-dark">
+                    <a class="page-link bg-secondary" href="?page={{ page_obj.previous_page_number }}" tabindex="-1" aria-label="Previous">
+                        <span aria-hidden="true" class='text-light fs-5 fw-bold'>&lt;</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item m-1 border border-dark active">
+                        <span class="page-link text-dark fs-5 fw-bold">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item m-1 border border-dark">
+                        <a class="page-link text-dark fs-5 fw-bold" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item m-1 border border-dark">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true" class='text-dark fs-5 fw-bold'>&gt;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+  
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const bookingRows = document.querySelectorAll('#example tbody tr');
+        
+            searchInput.addEventListener('input', function() {
+                const searchTerm = searchInput.value.toLowerCase();
+                bookingRows.forEach(function(row) {
+                    const technicianName = row.cells[0].innerText.toLowerCase();
+                    if (technicianName.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const openMapButtons = document.querySelectorAll('.open-map-modal');
+
+            openMapButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    // Trigger Leaflet map resize when modal is shown
+                    $('#mapModal').on('shown.bs.modal', function () {
+                        var map = L.map('map').setView([26.5172, 87.3240], 8);
+        
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+        
+                        fetch('/accounts/technician/get_user_locations/') // Adjust the URL based on your Django routes
+                .then(response => response.json())
+                .then(data => {
+                    // Add markers for each customer location
+                    data.user_locations.forEach(function(location) {
+                        var marker = L.marker([location.latitude, location.longitude]).addTo(map);
+                        marker.bindPopup('<b>Customer:</b> ' + location.user__username + '<br><b>Address:</b> ' + location.address);
+                    });
+                })
+                .catch(error => console.error('Error fetching customer locations:', error));
+                    });
+                });
+            });
+        });
+    </script>
+
+    {% include "includes/alerts.html" %}
+
+{% endblock %}

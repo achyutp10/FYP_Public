@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        
+      <div class="col-md-8 px-5 mb-2" style="background-color: #eef5fe; height: 550px; max-width: 60%;">
+        <h6>Set Address</h6>
+        <div id="map" style="height: 500px;">
+
+        </div>   
+
+      </div>
+
+      <div class="col-md-4 mt-2 mx-5">
+        <h5>Hi, <span class='text-danger'>{{user.first_name}}</span></h5>
+
+        <form class="border border-dark rounded-3 p-3" method="post" action="{% url "cprofile" %}">
+          {% csrf_token %}  
+          <h3 class="mb-1 text-center">Set Your Location</h3>
+          <div class="mb-0">
+              <label for="address" class="form-label">Address:</label>
+              {{profile_form.address}}
+          </div>
+          <div class="row mb-3">
+              <div class="col-md-4">
+                  <label for="country" class="form-label" hidden>Country:</label>
+                  {{profile_form.country}}
+              </div>
+              <div class="col-md-4">
+                  <label for="state" class="form-label" hidden>State:</label>
+                  {{profile_form.state}}
+              </div>
+          </div>
+          <div class="row mb-3">
+              <div class="col-md-4">
+                  <label for="city" class="form-label" hidden>City:</label>
+                  {{profile_form.city}}
+              </div>
+              <div class="col-md-4">
+                  <label for="pin_code" class="form-label" hidden>Pin code:</label>
+                  {{profile_form.pin_code}}
+              </div>
+          </div>
+          <div class="row mb-3">
+              <div class="col-md-4">
+                  <label for="latitude" class="form-label" hidden>Latitude:</label>
+                  {{profile_form.latitude}}
+              </div>
+              <div class="col-md-4">
+                  <label for="longitude" class="form-label" hidden>Longitude:</label>
+                  {{profile_form.longitude}}
+              </div>
+          </div>
+          <div class="text-end">
+              <button type="submit" class="btn px-5 fw-bold" style="background-color: #070441; color: white;">Save</button>
+          </div>
+      </form>
+      
+      
+      </div>
+      
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+    var initialLat = parseFloat(document.getElementById('id_latitude').value);
+    var initialLng = parseFloat(document.getElementById('id_longitude').value);
+    var map = L.map('map').setView([initialLat, initialLng], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
+
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        updateFormFields(e.latlng.lat, e.latlng.lng);
+    });
+
+    marker.on('dragend', function(e) {
+        updateFormFields(e.target.getLatLng().lat, e.target.getLatLng().lng);
+    });
+
+    function updateFormFields(latitude, longitude) {
+        document.getElementById('id_latitude').value = latitude;
+        document.getElementById('id_longitude').value = longitude;
+        
+        // Use Google Maps Geocoding API to reverse geocode coordinates
+        var geocoder = new google.maps.Geocoder();
+        var latlng = new google.maps.LatLng(latitude, longitude);
+
+        geocoder.geocode({ 'location': latlng }, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    var addressComponents = results[0].address_components;
+                    addressComponents.forEach(function(component) {
+                        if (component.types.includes('country')) {
+                            document.getElementById('id_country').value = component.long_name;
+                        } else if (component.types.includes('administrative_area_level_1')) {
+                            document.getElementById('id_state').value = component.long_name;
+                        } else if (component.types.includes('locality')) {
+                            document.getElementById('id_city').value = component.long_name;
+                        } else if (component.types.includes('postal_code')) {
+                            document.getElementById('id_pin_code').value = component.long_name;
+                        }
+                    });
+                    document.getElementById('id_address').value = results[0].formatted_address;
+                } else {
+                    console.log('No results found');
+                }
+            } else {
+                console.log('Geocoder failed due to: ' + status);
+            }
+        });
+    }
+</script>
+
+
+
+    
+
+{% include "includes/alerts.html" %}
+
+{% endblock  %}

@@ -1,0 +1,65 @@
+#header {
+  background-color: #f3e7e7; 
+  padding: 0.1rem 0; 
+}
+.navbar-collapse {
+  justify-content: flex-end;
+}
+
+.footer-widget {
+  background-color: #000000;
+  padding: 3rem 0;
+}
+
+.widget-title {
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  color: #666;
+}
+
+.form-control {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 40px;
+  padding: 0 15px;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: #222;
+  border-color: #222;
+  color: #fff;
+  height: 40px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #1b1b1b;
+}
+
+.copyright-sec {
+  background-color: #000000;
+  padding-top: 1px;
+  text-align: center;
+}
+
+.copy-right {
+  color: #ffffff;
+}
+
+
+/* Chat */
+

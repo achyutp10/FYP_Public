@@ -1,0 +1,95 @@
+{% load static %}
+<style>
+  .nav-link {
+    color:  #070441 !important;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .nav-item {
+    margin-right: 8px;
+  }
+
+  .nav-item a.nav-link:hover,
+  .nav-item a.active {
+    color: white !important;
+    font-size: 18px;
+    background-color: #070441;
+    transition: 0.9s;
+    border-radius: 8px;
+  }
+</style>
+<header id="header">
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url "home" %}">
+          <img src="{% static 'logo/fixitlogo.png' %}" alt="Fixit Logo" width="40" class="d-inline-block align-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+    {% if user.is_authenticated %}
+        <!-- Common navigation items for all authenticated users -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/services/' %}active{% endif %}" href="{% url 'services' %}">Services</a>
+        </li>
+    {% if user.role == 1 %}
+        <!-- Navigation items for technicians -->
+        <li class="nav-item">
+            <a class="nav-link {% if request.path == '/accounts/technician/technicianBookingList/' %}active{% endif %}" href="{% url 'technicianBookingList' %}">Bookings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.path == '/accounts/technicianDashboard/' %}active{% endif %}" href="{% url 'myAccount' %}">Profile</a>
+        </li>
+        <!-- Add more technician-specific navigation items here -->
+    {% elif user.is_authenticated and user.is_admin %}
+        <!-- Navigation items for admin -->
+        <li class="nav-item">
+            <a class="nav-link {% if request.path == '/admin/' %}active{% endif %}" href="{% url 'myAccount' %}">Admin Dashboard</a>
+        </li>
+    {% else %}
+        <!-- Navigation items for customers -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/accounts/booking/bookTechnician/' %}active{% endif %}" href="{% url 'bookTechnician' %}">Book Now</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/accounts/booking/customerBookingList/' %}active{% endif %}" href="{% url 'customerBookingList' %}">Bookings</a>
+        </li>
+      <li class="nav-item">
+          <a class="nav-link {% if request.path == '/accounts/custDashboard/' %}active{% endif %}" href="{% url 'myAccount' %}">Profile</a>
+      </li>
+        <!-- Add more customer-specific navigation items here -->
+    {% endif %}
+    <!-- Common navigation items for all authenticated users -->
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+    </li>
+{% else %}
+    <!-- Navigation items for anonymous users -->
+    <li class="nav-item">
+      <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.path == '/services/' %}active{% endif %}" href="{% url 'services' %}">Services</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.path == '/accounts/login/' %}active{% endif %}" href="{% url 'login' %}">Login</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.path == '/accounts/registerUser/' %}active{% endif %}" href="{% url 'registerUser' %}">Register</a>
+    </li>
+    <li class="nav-item">
+      <a class="btn" style="background-color: #070441; color: white;" href="{% url 'registerTechnician' %}">Register Technician</a>
+    </li>
+{% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>

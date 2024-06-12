@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .password-input-wrapper {
+    position: relative;
+}
+
+.eye-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 8px; /* Adjust as needed */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+</style>
+
+<div class="container mt-0 p-0">
+    <div class="row">
+      <div class="col-md-6" style="background-color: #e5f1ff; max-height: 270px; max-width: 50%;">
+        {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="Profile Photo" class="img-fluid rounded-circle m-3" style="width: 150px; height: 150px;">
+        {% else %}
+        <p>No profile picture available</p>
+        {% endif %}
+ 
+        <div class="ml-5">
+          <h3>Welcome back,</h3>
+          <div class="d-flex" style="gap: 370px;">
+            <span class="">{{user.username}}</span>
+            <a class="btn p-2 rounded" style="background-color: #070441; color: white;" href="{% url "cprofile" %}"><i class="fs-6 fa-solid fa-location-dot">  Set Location</i></a>
+          </div>
+        </div>
+        <div class="col-md-10" style="margin: 40px 0 0 0;">
+          <form class="d-flex border border-dark rounded">
+            <div class="input-group" style="padding: 2px; ">
+                <span class="input-group-prepend">
+                    <span class="input-group-text bg-white border-0"> 
+                        <i class="bi bi-search border-0" style="font-size: 1.2em; font-weight: bold;"></i>
+                    </span>
+                </span>
+                <input type="text" id="searchInput" class="form-control border-0" placeholder="Search by Service or Technician" aria-label="Search">
+            </div>       
+        </form>
+        </div>
+      </div>
+
+      <div class="col-md-6 mt-2">
+        <p>Hi, <span>{{user.first_name}}</span></p>
+        <form class="d-flex flex-column border border-dark rounded-3 p-3" method="post" action="{% url "updateCustomerInfo" %}">
+          {% csrf_token %}  
+          <div class="row mb-3">
+            <h3 class="mb-3 text-center">Personal Information</h3>
+            <div class="col-md-6">
+              <label for="first_name" class="form-label">First Name:</label>
+              <input type="text" class="form-control border border-dark rounded-3 px-2" id="first_name" name="first_name" value="{{user.first_name}}">
+            </div>
+            <div class="col-md-6">
+              <label for="last_name" class="form-label">Last Name:</label>
+              <input type="text" class="form-control border border-dark rounded-3 px-2" id="last_name" name="last_name" value="{{user.last_name}}">
+            </div>
+          </div>
+          <div class="mb-2">
+            <label for="phone_number" class="form-label">Contact:</label>
+            <input type="text" class="form-control border border-dark rounded-3 px-2" id="phone_number" name="phone_number" value="{{user.phone_number}}">
+          </div>
+          <div class="d-flex justify-content-end"> <button type="submit" class="btn gap-4 w-25 fw-bold" style="background-color: #070441; color: white;">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<!-- Next content -->
+
+<div class="container mt-3">
+  <h3 class="mt-4">Services</h3><br>
+  <div class="row">
+    <div class="col-md-4">
+
+    {% for technician in all_technicians %}
+      
+
+        <div class="border border-dark rounded-3 d-flex align-items-center mt-0 mb-2" style="height: 200px;">
+          <div>
+          <img src="{{technician.service_image.url}}" alt="" class="img-fluid rounded-circle m-3" style="width: 90px; height: 90px;">
+        </div>
+        <div class="mx-5 flex-grow-1">
+          <h4 class='mt-4'>{{ technician.service_type }}</h4>
+          <img src="{{technician.user.profile_picture.url}}" alt="Profile Photo" class="img-fluid rounded-circle m-3" style="width: 70px; height: 70px;">
+          <div class="mx-4 mb-3">
+            <span class="text-center">{{ technician.user.username }}</span>
+          </div>
+        </div>
+      </div>
+    
+      
+      {% endfor %}
+
+    </div>
+
+    <div class="col-md-6 mt-0 mb-2" style='margin-left: 220px;'>
+      <form class="d-flex flex-column border border-dark rounded-3 p-3" method="post" action="{% url "changePassCust" %}"> 
+          {% csrf_token %} 
+          <div class="row mb-3">
+              <h3 class="mb-1 text-center">Change Password</h3>
+              
+              <div class="mb-2">
+                  <label for="current_password" class="form-label">Current Password:</label>
+                  <div class="password-input-wrapper">
+                      <input type="password" class="form-control border border-dark rounded-3 px-2" id="current_password" name="current_password">
+                      <button type="button" class="eye-button" id="toggle-current-password" aria-label="Toggle password visibility">
+                          <i class="fas fa-eye"></i>
+                      </button>
+                  </div>
+              </div>
+              <div class="col-md-6">
+                  <label for="new_password" class="form-label">New Password:</label>
+                  <div class="password-input-wrapper">
+                      <input type="password" class="form-control border border-dark rounded-3 px-2" id="new_password" name="new_password">
+                      <button type="button" class="eye-button" id="toggle-new-password" aria-label="Toggle password visibility">
+                          <i class="fas fa-eye"></i>
+                      </button>
+                      <div id="password-error" class="error-message"></div>
+                  </div>
+              </div>
+              <div class="col-md-6">
+                  <label for="confirm_password" class="form-label">Confirm Password:</label>
+                  <div class="password-input-wrapper">
+                      <input type="password" class="form-control border border-dark rounded-3 px-2" id="confirm_password" name="confirm_password">
+                      <button type="button" class="eye-button" id="toggle-confirm-password" aria-label="Toggle password visibility">
+                          <i class="fas fa-eye"></i>
+                      </button>
+                      <div id="confirm-password-error" class="error-message"></div>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="d-flex justify-content-end">
+              <button type="submit" class="btn w-25 fw-bold" style="background-color: #070441; color: white;">Save</button>
+          </div>
+      </form>
+  </div>
+  
+  
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const togglePassword = (inputSelector, buttonSelector) => {
+          const passwordInput = document.querySelector(inputSelector);
+          const toggleButton = document.querySelector(buttonSelector);
+
+          toggleButton.addEventListener('click', function() {
+              const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+              passwordInput.setAttribute('type', type);
+
+              // Change eye icon based on password visibility
+              if (type === 'password') {
+                  toggleButton.querySelector('i').classList.remove('fa-eye-slash');
+                  toggleButton.querySelector('i').classList.add('fa-eye');
+              } else {
+                  toggleButton.querySelector('i').classList.remove('fa-eye');
+                  toggleButton.querySelector('i').classList.add('fa-eye-slash');
+              }
+          });
+      };
+
+      togglePassword('#current_password', '#toggle-current-password');
+      togglePassword('#new_password', '#toggle-new-password');
+      togglePassword('#confirm_password', '#toggle-confirm-password');
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var passwordInput = document.getElementById('new_password');
+    var confirmPasswordInput = document.getElementById('confirm_password');
+    
+    var passwordError = document.getElementById('password-error');
+    var confirmPasswordError = document.getElementById('confirm-password-error');
+
+    function validatePassword() {
+        var password = passwordInput.value;
+        if (password.length < 8) {
+            passwordError.textContent = 'Password must be at least 8 characters long.';
+            return false;
+        } else if (!password.match(/[a-zA-Z]/) || !password.match(/[0-9]/)) {
+            passwordError.textContent = 'Password must contain alphanumeric characters.';
+            return false;
+        } else {
+            passwordError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateConfirmPassword() {
+        if (confirmPasswordInput.value !== passwordInput.value) {
+            confirmPasswordError.textContent = 'Passwords do not match.';
+            return false;
+        } else {
+            confirmPasswordError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateForm() {
+        var isPasswordValid = validatePassword();
+        var isConfirmPasswordValid = validateConfirmPassword();
+
+        return isPasswordValid && isConfirmPasswordValid;
+    }
+
+    passwordInput.addEventListener('input', validatePassword);
+    confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+});
+</script>
+
+
+{% include "includes/alerts.html" %}
+
+{% endblock  %}

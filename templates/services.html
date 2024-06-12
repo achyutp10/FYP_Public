@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<style>
+  .card {
+    padding: 40px; 
+    border: none;    }
+  
+  .card-img-top {
+    width: 170px; 
+    height: auto; 
+  }
+</style>
+
+<!-- Hero Section -->
+<div class="container-fluid">
+  <div class="row text-center" style="background-color: #e5f1ff; max-height: 300px; padding:100px;">
+    <h5>- About our company</h5>
+    <h2 class='mb-3 fw-bold'>OUR SERVICES</h2>
+    <h5> Our team focuses on helping you achieve <br> optimal technical surface</h5>
+
+  </div>
+</div>
+
+<!--  -->
+
+<div class='mt-4 mx-5'><p class='mx-3'>- What we provide</p></div>
+
+<div class="container mb-5 mt-4">
+  <div class="row">
+    <div class="col-sm-6">  
+          <h3 class="fw-bold">We provide the best <br> technical services</h3>
+        </div>
+    <div class="col-sm-6">  
+          <p class="fs-5">Additionally, no one ever loves, pursues, or
+            desires themselves out of pain—well, not
+            always. options for house cleaning services
+            and go on from there.</p>
+        </div>
+      </div>
+    </div>
+    
+
+<!-- Services -->
+
+<div class="container mb-5">
+  <div class="row justify-content-between px-5">
+    <div class="col-sm-4 mt-4">
+      <div class="card border border-dark h-100">
+        <img src="{% static 'images/plumber.jpg' %}" alt="" class="card-title rounded-circle" style="width: 75px; height: 75px;">
+        <div class="card-body d-flex flex-column align-items-start"> 
+          <h5 class="fw-bold card-text p-1 rounded" style="background-color: #b2d4ab;">Plumbing</h5>
+          <p class="card-text">Effective plumbing solutions aren't just about fixing leaks, they're about fixing leaks promptly.</p>
+          {% comment %} <a href="blog.html" class="mt-auto d-flex align-items-center text-decoration-none text-dark p-1 rounded" style="background-color: #E6E6FA;">
+            <h6 class="fw-bold mb-0 me-2">Learn More</h6>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a> {% endcomment %}
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 mt-4">
+      <div class="card border border-dark h-100">
+        <img src="{% static 'images/electrician.jpg' %}" alt="" class="card-title rounded-circle" style="width: 75px; height: 75px;">
+        <div class="card-body d-flex flex-column align-items-start"> 
+          <h5 class="fw-bold card-text p-1 rounded" style="background-color: #b2d4ab;">Electrician</h5>
+          <p class="card-text">Resolving electrical issues isn't merely about fixing faults, it's about fixing them promptly.</p>
+          {% comment %} <a href="" class="mt-auto d-flex align-items-center text-decoration-none text-dark p-1 rounded" style="background-color: #E6E6FA;">
+            <h6 class="fw-bold mb-0 me-2">Learn More</h6>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a> {% endcomment %}
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 mt-4">
+      <div class="card border border-dark h-100">
+        <img src="{% static 'images/pest.jpg' %}" alt="" class="card-title rounded-circle" style="width: 75px; height: 75px;">
+        <div class="card-body d-flex flex-column align-items-start"> 
+          <h5 class="fw-bold card-text p-1 rounded" style="background-color: #b2d4ab;">Pest Control</h5>
+          <p class="card-text">Beyond just eliminating pests, pest control experts focus on swift eradication.</p>
+          {% comment %} <a href="" class="mt-auto d-flex align-items-center text-decoration-none text-dark p-1 rounded" style="background-color: #E6E6FA;">
+            <h6 class="fw-bold mb-0 me-2">Learn More</h6>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a> {% endcomment %}
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 mt-4">
+      <div class="card border border-dark h-100">
+        <img src="{% static 'images/painter.jpg' %}" alt="" class="card-title rounded-circle" style="width: 75px; height: 75px;">
+        <div class="card-body d-flex flex-column align-items-start"> 
+          <h5 class="fw-bold card-text p-1 rounded" style="background-color: #b2d4ab;">Painter</h5>
+          <p class="card-text">Painters go beyond brushes
+            and colors; they ensure
+            swift transformations.</p>
+          {% comment %} <a href="" class="mt-auto d-flex align-items-center text-decoration-none text-dark p-1 rounded" style="background-color: #E6E6FA;">
+            <h6 class="fw-bold mb-0 me-2">Learn More</h6>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a> {% endcomment %}
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 mt-4">
+      <div class="card border border-dark h-100">
+        <img src="{% static 'images/carpenter.jpg' %}" alt="" class="card-title rounded-circle" style="width: 75px; height: 75px;">
+        <div class="card-body d-flex flex-column align-items-start"> 
+          <h5 class="fw-bold card-text p-1 rounded" style="background-color: #b2d4ab;">Carpenter</h5>
+          <p class="card-text">Carpenters excel woodwork,
+            they ensure timely solutions.
+            Crafting and repairing,
+            shape homes precision.</p>
+          {% comment %} <a href="" class="mt-auto d-flex align-items-center text-decoration-none text-dark p-1 rounded" style="background-color: #E6E6FA;">
+            <h6 class="fw-bold mb-0 me-2">Learn More</h6>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a> {% endcomment %}
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 mt-4">
+      <div class="card border border-dark h-100">
+        <img src="{% static 'images/fenceexpert.jpg' %}" alt="" class="card-title rounded-circle" style="width: 75px; height: 75px;">
+        <div class="card-body d-flex flex-column align-items-start"> 
+          <h5 class="fw-bold card-text p-1 rounded" style="background-color: #b2d4ab;">Fence Expert</h5>
+          <p class="card-text">Going beyond just setting up
+            fence experts specialize in
+            meticulous installations and
+            repairs.</p>
+          {% comment %} <a href="" class="mt-auto d-flex align-items-center text-decoration-none text-dark p-1 rounded" style="background-color: #E6E6FA;">
+            <h6 class="fw-bold mb-0 me-2">Learn More</h6>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a> {% endcomment %}
+        </div>
+      </div>
+    </div>
+
+    <!--  -->
+  </div>
+</div>
+
+<!-- Testimonials -->
+<div class="container-fluid">
+  <div class="row text-center" style="background-color: #e5f1ff; max-height: 580px; padding:50px;">
+    <h5>Testimonials</h5>
+    <h4 class='mb-3 fw-bold'>Kind words from customers</h4>
+
+    {% for rating in all_ratings  %}
+    
+     <div class="col-sm-6 mt-4">
+      <div class="card border border-dark h-100 bg-dark">
+        <img src="{{rating.user.profile_picture.url}}" alt="" class="card-title rounded-circle" style="width: 75px; height: 75px;">
+          <div class="card-body d-flex flex-column align-items-start">
+              <h5 class="fw-bold card-text text-light">{{rating.user.first_name}} {{rating.user.last_name}}</h5>
+              <p class="card-text text-start text-light">{{rating.feedbacks}}</p>
+              <div class="fs-3" style='color: yellow;'>
+                {% for _ in "x"|rjust:rating.rating %}
+                  <i class="fa-solid fa-star me-1"></i>
+                    {% endfor %}
+                </div>
+          </div>
+      </div>
+  </div>
+  {% endfor %}
+
+  </div>
+</div>
+
+	<!-- Footer -->
+
+{% endblock  %}

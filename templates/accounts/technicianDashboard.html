@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+  .password-input-wrapper {
+    position: relative;
+}
+
+.eye-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 8px; /* Adjust as needed */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-5 px-5 mb-2" style="background-color: #eef5fe; height: 330px; max-width: 50%;">
+        {% if user.profile_picture %}
+        <img src="{{user.profile_picture.url}}" alt="Profile Photo" class="img-fluid rounded-circle m-3" style="width: 150px; height: 150px;"> 
+        {% else %}
+        <p>No profile picture available</p>
+        {% endif %}
+
+        <div class='d-flex gap-2' style='margin-left: 30px; margin-top: 10px;'>
+          
+          <h4 class='fw-bold'>{{user.username}},</h4>
+          <h5 class='fw-bold mt-1' style='margin-top: 1px;'>{{technician.service_type}}</h5>
+        </div>
+
+        <div style='margin-left: 330px; margin-top: 45px;'>
+          <div class='d-flex'>
+            <a class="btn p-2 rounded" style="background-color: #070441; color: white;" href="{% url "tprofile" %}"><i class="fs-5 fw-bold fa-solid fa-location-dot"> Set Location</i></a>
+          </div>
+        </div>
+
+
+        <div class="border border-dark rounded" style='margin-left: 30px; margin-top: 50px;'>
+          <div class="container mt-2">
+            <h4 class="text-center fw-bold">Availability Status</h4>
+            <hr />
+            <form action="{% url "update_status" %}" method="POST">
+              {% csrf_token %}
+                       
+              <label for="status">Status</label>
+              <select name="status" id="status" class="form-control px-2">
+                <option value="Available">Available</option>
+                <option value="Unavailable">Unavailable</option>
+              </select>
+              <br />
+              <button type="submit" class="btn p-2 rounded mb-2 d-flex justify-content-center" style="background-color: #070441; color: white;">
+                Update Status
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-md-6 mt-2 mx-5">
+        <h5>Hi, <span class='text-danger'>{{user.first_name}}</span></h5>
+        <form class="d-flex flex-column border border-dark rounded-3 p-3" method="post" action="{% url "updateTechnicianInfo" %}">
+          {% csrf_token %}  
+          <div class="row mb-3">
+              <h3 class="mb-3 text-center">Personal Information</h3>
+              <div class="col-md-6">
+                  <label for="first_name" class="form-label">First Name:</label>
+                  <input type="text" class="form-control border border-dark rounded-3 px-2" id="first_name" name="first_name" value="{{ user.first_name }}">
+              </div>
+              <div class="col-md-6">
+                  <label for="last_name" class="form-label">Last Name:</label>
+                  <input type="text" class="form-control border border-dark rounded-3 px-2" id="last_name" name="last_name" value="{{ user.last_name }}">
+              </div>
+          </div>
+          <div class="mb-2">
+              <label for="phone_number" class="form-label">Contact:</label>
+              <input type="text" class="form-control border border-dark rounded-3 px-2" id="phone_number" name="phone_number" value="{{ user.phone_number }}">
+          </div>
+          <div class="mb-2">
+              <label for="service_charge" class="form-label">Price:</label>
+              <input type="number" class="form-control border border-dark rounded-3 px-2" id="service_charge" name="service_charge" value="{{ technician.service_charge }}">
+          </div>
+          <div class="d-flex justify-content-end">
+              <button type="submit" class="btn gap-4 px-5 fw-bold" style="background-color: #070441; color: white;">Save</button>
+          </div>
+      </form>
+      
+        <div class="col-md-13 mt-4 mb-2">
+          <form class="d-flex flex-column border border-dark rounded-3 p-3" method="post" action="{% url "changePassTech" %}"> 
+            {% csrf_token %} 
+            <div class="row mb-3">
+              <h3 class="mb-1 text-center">Change Password</h3>
+              
+              <div class="mb-2">
+                <label for="current_password" class="form-label">Current Password:</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="form-control border border-dark rounded-3 px-2" id="current_password" name="current_password">
+                  <button type="button" class="eye-button" id="toggle-current-password" aria-label="Toggle password visibility">
+                      <i class="fas fa-eye"></i>
+                  </button>
+              </div>
+              </div>
+              <div class="col-md-6">
+                <label for="new_password" class="form-label">New Password:</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="form-control border border-dark rounded-3 px-2" id="new_password" name="new_password">
+                  <button type="button" class="eye-button" id="toggle-new-password" aria-label="Toggle password visibility">
+                      <i class="fas fa-eye"></i>
+                  </button>
+                  <div id="password-error" class="error-message"></div>
+              </div>
+              </div>
+              <div class="col-md-6">
+                <label for="confirm_password" class="form-label">Confirm Password:</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="form-control border border-dark rounded-3 px-2" id="confirm_password" name="confirm_password">
+                  <button type="button" class="eye-button" id="toggle-confirm-password" aria-label="Toggle password visibility">
+                      <i class="fas fa-eye"></i>
+                  </button>
+                  <div id="confirm-password-error" class="error-message"></div>
+              </div>
+              </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+              <button type="submit x" class="btn px-5 fw-bold" style="background-color: #070441; color: white;">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const togglePassword = (inputSelector, buttonSelector) => {
+          const passwordInput = document.querySelector(inputSelector);
+          const toggleButton = document.querySelector(buttonSelector);
+
+          toggleButton.addEventListener('click', function() {
+              const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+              passwordInput.setAttribute('type', type);
+
+              // Change eye icon based on password visibility
+              if (type === 'password') {
+                  toggleButton.querySelector('i').classList.remove('fa-eye-slash');
+                  toggleButton.querySelector('i').classList.add('fa-eye');
+              } else {
+                  toggleButton.querySelector('i').classList.remove('fa-eye');
+                  toggleButton.querySelector('i').classList.add('fa-eye-slash');
+              }
+          });
+      };
+
+      togglePassword('#current_password', '#toggle-current-password');
+      togglePassword('#new_password', '#toggle-new-password');
+      togglePassword('#confirm_password', '#toggle-confirm-password');
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var passwordInput = document.getElementById('new_password');
+    var confirmPasswordInput = document.getElementById('confirm_password');
+    
+    var passwordError = document.getElementById('password-error');
+    var confirmPasswordError = document.getElementById('confirm-password-error');
+
+    function validatePassword() {
+        var password = passwordInput.value;
+        if (password.length < 8) {
+            passwordError.textContent = 'Password must be at least 8 characters long.';
+            return false;
+        } else if (!password.match(/[a-zA-Z]/) || !password.match(/[0-9]/)) {
+            passwordError.textContent = 'Password must contain alphanumeric characters.';
+            return false;
+        } else {
+            passwordError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateConfirmPassword() {
+        if (confirmPasswordInput.value !== passwordInput.value) {
+            confirmPasswordError.textContent = 'Passwords do not match.';
+            return false;
+        } else {
+            confirmPasswordError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateForm() {
+        var isPasswordValid = validatePassword();
+        var isConfirmPasswordValid = validateConfirmPassword();
+
+        return isPasswordValid && isConfirmPasswordValid;
+    }
+
+    passwordInput.addEventListener('input', validatePassword);
+    confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+    var form = document.querySelector('form');
+    form.addEventListener('x', function(event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+});
+</script>
+
+{% include "includes/alerts.html" %}
+
+{% endblock  %}

@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<style>
+  /* Hide radio buttons */
+  .rating input[type="radio"] {
+    display: none;
+    
+  }
+
+  /* Style star labels */
+  .rating label {
+    font-size: 40px; /* Adjust the size as needed */
+    color: rgb(255, 213, 0); /* Color of the stars */
+    cursor: pointer;
+    
+  }
+
+  /* Style for selected stars */
+.rating input[type="radio"]:checked + label i {
+  color: #ff942d; /* Color of the selected stars */
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #6c757d;
+  border-color: #6c757d; 
+}
+</style>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 px-5" style="background-color: #e5f1ff; height: 730px;"> 
+      <div class='text-center' style='margin-top: 80px;'>
+        <h2 class='fw-bold text-secondary'>Admin Panel</h2>
+        <h2 class='fw-bold text-secondary'>Dashboard</h2>
+      </div>
+
+      <div style='margin-top: 50px;'>
+        <select class="form-select rounded-0" style='border: 2px solid #070441; font-size: 20px;' id="exampleFormControlSelect1" onchange="location = this.value;">
+          <option value="Customer" selected hidden>Customer</option>
+          <option class='text-light' style='background-color: #070441;' value="{% url "adminCustomer" %}">Customer</option>
+          <option class='text-light' style='background-color: #070441;' value="{% url "adminTechnician" %}">Technician</option>
+          <option class='text-light' style='background-color: #070441;' value="{% url "adminBooking" %}">Bookings</option>
+        </select>
+      </div> 
+  </div>
+
+<!-- Search -->
+<div class="col-md-9">
+<div class="container mt-0 p-0">
+  
+  <div class="row">
+      <div class="col-md-5" style="margin: 40px 0 0 600px;">
+        <form class="d-flex border border-dark border-2 rounded w-100">
+          <div class="input-group" style="padding: 1px; ">
+            <span class="input-group-prepend">
+              <span class="input-group-text bg-white border-0"> 
+                <i class="bi bi-search border-0" style="font-size: 1.3em;"></i>
+              </span>
+            </span>
+            <input type="text" id="searchInput" class="form-control border-0 fw-bold fs-5" placeholder="Search Here" aria-label="Search">
+          </div>       
+        </form>
+      </div>
+    </div>
+    </div>
+
+    <div class="container rounded mt-5" style='border-bottom: 2px solid #070441; border-left: 1px solid #070441; border-right: none; box-shadow: 0.3px 0 0 0 #070441;'>
+    
+      <table class="table table-borderless text-center" id="example">
+        <thead>
+          <tr>
+            <th>Technician Name</th>
+            <th>Customer Name</th>
+            <th>Booking Status</th>
+            <th>Payment Status</th>
+            <th>Charge</th>
+            <th>Date</th>
+            <th>Address</th>
+            
+            <th>Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for booking in page_obj  %}
+          
+          
+          <tr>
+            <td>{{booking.technician.user.first_name}} {{booking.technician.user.last_name}}</td>
+            <td>{{booking.user.first_name}} {{booking.user.last_name}}</td>
+            <td>
+              {{booking.status}}
+            </td>
+            <td>
+              {% if booking.is_paid %}
+              <h6 class='fw-bold text-dark rounded p-2' style='background-color: #E6E6FA;'>Paid</h6>
+              {% else %}
+              <h6 class='fw-bold text-dark rounded p-2' style='background-color: #E6E6FA;'>Not Paid</h6>
+              {% endif %}
+            </td>
+            
+            <td>{{booking.technician.service_charge}}</td>
+            <td>{{booking.booking_date|date:"Y-m-d"}}</td>
+            <td>{{ booking.address.split.0 }}</td>
+
+
+
+
+            <td>
+              <form action="{% url 'deletebooking' booking.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this booking?')">
+                {% csrf_token %}
+                <button type="submit" class="btn">
+                    <i class="fa-regular fa-trash-can fa-2x" style='color: #070441;'></i>
+                </button>
+            </form> 
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal fade" id="imageModal{{ booking.pk }}" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-body">
+                  <img src="" alt="booking License" class="img-fluid" id="modalImage">
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+ <!-- Pagination -->
+ <div class="container">
+  <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-end">
+          {% if page_obj.has_previous %}
+              <li class="page-item m-1 border border-dark">
+                  <a class="page-link bg-secondary" href="?page={{ page_obj.previous_page_number }}" tabindex="-1" aria-label="Previous">
+                      <span aria-hidden="true" class='text-light fs-5 fw-bold'>&lt;</span>
+                  </a>
+              </li>
+          {% endif %}
+          {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                  <li class="page-item m-1 border border-dark active">
+                      <span class="page-link text-dark fs-5 fw-bold">{{ num }}</span>
+                  </li>
+              {% else %}
+                  <li class="page-item m-1 border border-dark">
+                      <a class="page-link text-dark fs-5 fw-bold" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+              {% endif %}
+          {% endfor %}
+          {% if page_obj.has_next %}
+              <li class="page-item m-1 border border-dark">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                      <span aria-hidden="true" class='text-dark fs-5 fw-bold'>&gt;</span>
+                  </a>
+              </li>
+          {% endif %}
+      </ul>
+  </nav>
+</div>
+</div>
+</div>
+<script>
+  
+    // Set the image source when the modal is shown
+    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var imageUrl = this.querySelector('img').getAttribute('src');
+            var modalImage = document.querySelector('#modalImage');
+            modalImage.src = imageUrl;
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('searchInput');
+      const bookingRows = document.querySelectorAll('#example tbody tr');
+  
+      searchInput.addEventListener('input', function() {
+          const searchTerm = searchInput.value.toLowerCase();
+          bookingRows.forEach(function(row) {
+              const technicianName = row.cells[0].innerText.toLowerCase();
+              if (technicianName.includes(searchTerm)) {
+                  row.style.display = '';
+              } else {
+                  row.style.display = 'none';
+              }
+          });
+      });
+  });
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+{% include "includes/alerts.html" %}
+
+{% endblock %}

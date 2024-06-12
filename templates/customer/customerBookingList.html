@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .pagination .page-item.active .page-link {
+      background-color: #6c757d;
+      border-color: #6c757d; 
+  }
+</style>
+
+<script src="https://js.stripe.com/v3/"></script>
+
+<div class="container-fluid">
+  <div class="row text-center" style="background-color: #e5f1ff; height: 250px; padding: 20px;">
+    <div class="col">
+      <img src="{{user.profile_picture.url}}" alt="" class='rounded rounded-circle' style='height: 120px; width: 120px;'>
+      <h2 class="mb-2 fw-bold text-danger">{{user.first_name}} {{user.last_name}}</h2>
+      <h5 class='fw-bold fs-3'>Find Your Bookings Here</h5>
+    </div>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="container mt-0 p-0">
+  <div class="row">
+      <div class="col-md-5" style="margin: 40px 0 0 700px;">
+        <form class="d-flex border border-dark border-2 rounded w-100">
+          <div class="input-group" style="padding: 1px; ">
+            <span class="input-group-prepend">
+              <span class="input-group-text bg-white border-0"> 
+                <i class="bi bi-search border-0" style="font-size: 1.3em;"></i>
+              </span>
+            </span>
+            <input type="text" id="searchInput" class="form-control border-0 fw-bold fs-5" placeholder="Search Here" aria-label="Search">
+
+          </div>       
+        </form>
+      </div>
+    </div>
+    </div>
+
+    <div class="container rounded mt-5" style='border-bottom: 2px solid #070441; border-left: 1px solid #070441; border-right: none; box-shadow: 0.3px 0 0 0 #070441;'>
+
+      <table class="table table-borderless text-center" id="example">
+          <thead>
+              <tr>
+                  <th>Technician Name</th>
+                  <th>Booking Date</th>
+                  <th>Status</th>
+                  <th>Service Type</th>
+                  <th>Service Charge</th>
+                  <th>Payment</th>
+                  <th>Rating</th>
+                  <th>Chat</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for booking in page_obj %}
+              <tr>
+                  <td>{{ booking.technician.user.first_name }} {{ booking.technician.user.last_name }}</td>
+                  <td>{{ booking.booking_date|date:"Y-m-d" }}</td>
+                  <td>{{booking.status}}</td>
+                  <td>{{ booking.technician.service_type }}</td>
+                  <td>{{ booking.technician.service_charge }}</td>
+  
+                  {% if booking.status == "ACCEPT" and booking.is_paid is False %}
+                  <td>
+                    <a href="{% url "checkout" booking.id %}" id="submit" class="btn btn-success border-0 fw-bold" style='background-color: #070441;'>Pay Now</a>
+                </td>
+                {% elif  booking.is_paid is True %}
+                <td>Paid</td>
+                  {% else %}
+                  <td>Not Accepted</td>
+                  {% endif %}
+                  <td>
+                    {% if booking.ratings.exists %}
+                    
+                        {% for rating in booking.ratings.all %}
+                            <div class="rating">
+                                {% for _ in "x"|ljust:rating.rating %}
+                                    <i class="fa-regular fa-star"></i>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <a href="{% url 'giveRating' booking.technician.id booking.id %}" class="btn btn-success border-0 fw-bold" style='background-color: #070441;'>Rate Now</a>
+                    {% endif %}
+                </td>
+                
+                  <td><a href="{% url "messages_page" %}" style='color: #070441;'><i class="fa-regular fa-comment fa-2x mb-2"></i></a></td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+  
+  <!-- Pagination -->
+  <div class="container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+            {% if page_obj.has_previous %}
+                <li class="page-item m-1 border border-dark">
+                    <a class="page-link bg-secondary" href="?page={{ page_obj.previous_page_number }}" tabindex="-1" aria-label="Previous">
+                        <span aria-hidden="true" class='text-light fs-5 fw-bold'>&lt;</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item m-1 border border-dark active">
+                        <span class="page-link text-dark fs-5 fw-bold">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item m-1 border border-dark">
+                        <a class="page-link text-dark fs-5 fw-bold" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item m-1 border border-dark">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true" class='text-dark fs-5 fw-bold'>&gt;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+  
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('searchInput');
+      const bookingRows = document.querySelectorAll('#example tbody tr');
+  
+      searchInput.addEventListener('input', function() {
+          const searchTerm = searchInput.value.toLowerCase();
+          bookingRows.forEach(function(row) {
+              const technicianName = row.cells[0].innerText.toLowerCase();
+              if (technicianName.includes(searchTerm)) {
+                  row.style.display = '';
+              } else {
+                  row.style.display = 'none';
+              }
+          });
+      });
+  });
+  </script>
+  
+
+
+{% include "includes/alerts.html" %}
+
+{% endblock  %}

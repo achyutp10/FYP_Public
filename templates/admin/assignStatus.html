@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+  <div class="row text-center" style="background-color: #e5f1ff; height: 250px; padding: 20px;">
+    <div class="col">
+      <img src="{{technician.user.profile_picture.url}}" alt="" class='rounded rounded-circle' style='height: 120px; width: 120px;'>
+      <h2 class="mb-2 fw-bold text-danger">{{technician.user.first_name}} {{technician.user.last_name}}</h2>
+      <h5 class='fw-bold fs-3'>APPROVE TECHNICIAN</h5>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <h2 class="text-center">APPROVE TECHNICIAN</h2>
+  <hr />
+  <div class="row justify-content-center"> 
+    <div class="col-md-6 border border-dark rounded mb-3">
+      <form action="{% url "assignStatus" technician.id %}" method="post" class="align-items-center mt-3">
+        {% csrf_token %}
+        <label for="technicianid mt-3">Technician Email</label>
+        <input
+          type="text"
+          name="technicianid"
+          class="form-control p-2"
+          value="{{ technician.user.email }}"
+          readonly
+        />
+
+        <label for="status">Status</label>
+        <select name="status" id="status" class="form-control p-2">
+          <option value="ACCEPT" {% if technician.is_approved %} selected {% endif %}>Approve</option>
+          <option value="REJECT" {% if not technician.is_approved %} selected {% endif %}>Reject</option>
+        </select>
+        <br />
+        <input type="Submit" value="Update Status" class="btn fw-bold text-light border-0 p-2 mb-2 float-end" style='background-color: #070441;'>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% include "includes/alerts.html" %}
+
+{% endblock  %}

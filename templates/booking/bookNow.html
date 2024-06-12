@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<style>
+  input[type="text"],
+    [type="date"],
+    [type="time"] {
+        width: 100%;
+        padding: 8px;
+        border: 2px solid #555454;
+        border-radius: 5px;
+      }
+</style>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-6" style="background-color: #e5f1ff; max-height: 470px; max-width: 50%;">
+      <img src="{{ technician.user.profile_picture.url }}" alt="Profile Photo" class="img-fluid rounded-circle m-3" style="width: 150px; height: 150px;"> 
+      <div class="mx-4 d-flex flex-row gap-3">
+        <h2 class='fw-bold'>{{ technician.user.first_name }} {{ technician.user.last_name }}</h2>
+        {% if technician.is_available_status == True %}
+          <h6 class="fw-bold p-2 rounded text-light" style="background-color: #070441;">Available</h6>
+          {% elif technician.is_available_status == False %}
+          <h6 class="fw-bold p-2 rounded text-light" style="background-color: #070441;">Unavailable</h6>
+          {% endif %}
+      </div>
+      <h5 class='mx-4 mt-3 mb-5'>{{ technician.technician_description }}</h5>
+    </div>
+
+    <div class="col-sm-5 mt-2">
+      <!-- search -->
+      <div>
+        <form class="mx-2" style='width: 80%;'>
+          <div class="input-group" style="padding: 2px;">
+            <input type="text" class="form-control border border-secondary rounded" placeholder="Search...">
+          </div>       
+        </form>
+      </div>
+      <!--  -->
+
+      <!-- Textual content  -->
+      <h3 class='mx-3 mt-3 fw-bold fs-1 text-secondary'>Why will you choose me?</h3>
+      <ul class='mx-3 mt-3 fw-bold fs-4 text-secondary'>
+        <li class="mt-4"> Fully Satisfaction Guarantee
+          & Commitment</li>
+          <li class="mt-4">Trusted Professionals &
+            Quality Services</li>
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+<h4 class='mt-5 fw-bold fs-2 text-center'>Book Now</h4>
+
+<div class="container mt-3" style="background-color: #e5f1ff; height: 680px; width: 60%;">
+  <div class="row justify-content-center">
+    <h4 class='fw-bold text-center fs-3 mt-5 mb-5'>Please Fill Out The Form & <br>
+      Confirm Your Booking</h4>
+      
+        <div style='padding-left: 18%; padding-right: 18%;'>
+          <form action="" class="form-fields-set" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <ul class="">
+              <li class="list-unstyled">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <ul class="list-unstyled">
+                      <li class="mb-2">
+                        <div class="col-md-12">
+                          <div class="field-holder">
+                            <label for="email" type="email">Email</label>
+                            {{form.email}}
+                            
+                          </div>
+                        </div>
+                      </li>
+                      <li class="mb-2">
+                        <div class="col-md-12">
+                          <div class="field-holder">
+                            <label for="Name">Name</label>
+                            {{form.name}}
+                          </div>
+                        </div>
+                      </li>
+                      <li class="mb-2">
+                        <div class="col-md-12">
+                          <div class="field-holder">
+                            <label for="Zip code">Address</label>
+                            {{form.address}}
+                          </div>
+                        </div>
+                      </li>
+                      <li class="mb-2">
+                        <div class="col-md-12">
+                          <div class="field-holder">
+                            <label for="contact">Phone Number</label>
+                            {{form.phone_number}}
+                          </div>
+                        </div>
+                      </li>
+                      <li class="row mb-2">
+                        <div class="col-md-6">
+                          <div class="field-holder">
+                            <label for="Date">Date:</label>
+                            <input type="date" name="booking_date" id="booking_date" value="{{ today_date }}" min="{{ today_date }}">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="field-holder">
+                            <label for="Time">Time</label>
+                            <input type="time" name="" id="" value="{{current_time}}">
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                        <!-- Button -->
+                          <div class='row justify-content-center mt-4' style='padding-left: 36%; padding-right: 36%;'>
+                            <input type="submit" value="Book Now" class="btn fw-bold text-light border-0" style='background-color: #070441; padding-top: 8%; padding-bottom: 8%'>
+                          </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </form>
+        </div>
+
+  </div>
+</div>
+
+<!-- Banner -->
+<div class='container-fluid p-0 mt-4' style='overflow-x: hidden; position: relative;'>
+  <div class='row'>
+    <img src="{% static 'images/bookbanner.jpg' %}" alt="" style='max-width: 100%; height:180px;'>
+    <h3 class="position-absolute text-center top-50 fw-bold fs-1" style="color: #a22020;">Get It done quickly!</h3>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const bookingDateInput = document.getElementById('booking_date');
+      
+      
+      const todayDate = new Date().toISOString().split('T')[0];
+      
+      
+      bookingDateInput.min = todayDate;
+      
+      
+      bookingDateInput.addEventListener('change', function() {
+          const selectedDate = bookingDateInput.value;
+          
+          
+          if (selectedDate < todayDate) {
+              bookingDateInput.value = todayDate;
+          }
+      });
+  });
+</script>
+
+
+
+{% include "includes/alerts.html" %}
+
+	<!-- Footer -->
+
+{% endblock  %}

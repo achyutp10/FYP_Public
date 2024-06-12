@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<style>
+
+  .card {
+    padding: 40px; 
+    border: none;    }
+  
+  .card-img-top {
+    width: 170px; 
+    height: auto; 
+  }
+  
+    .pagination .page-item.active .page-link {
+        background-color: #6c757d; /* Dark grey color */
+        border-color: #6c757d; /* Dark grey color */
+    }
+  
+    @keyframes show-toast {
+      0% {bottom: -100%}
+      20% {bottom: 100px}
+      80% {bottom: 100px}
+      100% {bottom: -100%}
+    }
+    
+    .show-notification {
+      position: fixed;
+      bottom: 100%;
+      right: 20px;
+      animation-name: show-toast;
+      animation-duration: 8s;
+    }
+</style>
+<body>
+<!-- Hero Section -->
+<div class="container-fluid">
+  <div class="row text-center" style="background-color: #e5f1ff; max-height: 300px; padding: 100px;">
+    <div class="col">
+      <h1 class="mb-3 fw-bold">Book Technician</h1>
+      <h5>We consider all customers equal and generate a professional outcome of our work.</h5>
+      <div class="d-flex justify-content-center mt-4">
+        <form style="width: 60%;" action='{% url "search" %}' method='GET'>
+          <div class="d-flex gap-3">
+            <input type="text" name="s_type" class="form-control border border-dark rounded p-2" placeholder="Service Type">
+            <input type="text" name='address' class="form-control border border-dark rounded p-2" placeholder="Location..." required id='id_address'>
+            <input type="hidden" name='lat' value='' id='id_latitude'>
+            <input type="hidden" name='lng' value='' id='id_longitude'>
+            <select name="radius" id="radius" class='border border-dark rounded' required>
+              <option value="" selected>Choose Radius</option>
+              <option value="5" >5Km</option>
+              <option value="10" >10Km</option>
+              <option value="15" >15Km</option>
+              <option value="25" >25Km</option>
+            </select>
+            <input type='submit' value='Search' class='btn btn-primary fw-bold py-2 rounded border-0 f-light' style='background-color:#070441;'>
+          </div>       
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- text -->
+<div class="container mb-3 mt-4">
+  <div class="row">
+    <div class="col-sm-6">  
+      <p>- Look for your desire</p>
+          <h3 class="fw-bold">Discover what makes us
+            <br>top choice.</h3>
+        </div>
+      </div>
+    </div>
+    
+
+<!-- technicians card -->
+
+<div class="container mb-5">
+  <div class="row justify-content-evenly px-2 g-1">
+    {% for technician in page_obj %}
+    {% if technician.is_available_status == True and technician.is_approved == True  %}
+    {% comment %} {% if technician.is_approved == True  %} {% endcomment %}
+    <div class="col-sm-3 position-relative mt-5 me-1 border border-dark rounded min-height-200 p-0 shadow-lg">
+      <div class="card">
+        <div class="d-flex gap-0 align-items-start">
+          <img src="{{ technician.user.profile_picture.url }}" alt="" class="card-img-top rounded-circle" style="width: 75px; height: 75px;">
+          {% if technician.user_profile.city == None %}
+          <h6 class="card-text"></h6>
+          {% else %}
+          <h6 class="fw-bold card-text p-1 rounded mt-5 mx-1" style="background-color: rgba(247, 81, 81, 0.419);">{{technician.user_profile.city}}</h6>
+          
+          {% endif %}
+          {% if technician.is_available_status == True and technician.is_booked_status == False %}
+          <h6 class="fw-bold card-text p-1 rounded mt-5 mx-1" style="background-color: rgba(247, 81, 81, 0.419);"><i class="fa-solid fa-user-check"></i></h6>
+          {% elif technician.is_booked_status == True %}
+          <h6 class="fw-bold card-text p-1 rounded mt-5 mx-1" style="background-color: rgba(247, 81, 81, 0.419);"><i class="fa-solid fa-user-xmark"></i></h6>
+          {% endif %}
+          {% if address %}
+            <h6 class="fw-bold card-text p-1 rounded mt-5 mx-1" style="background-color: rgba(247, 81, 81, 0.419);">
+            <small>{{ technician.kms }}km</small>
+            </h6>
+          {% endif %}
+        </div>
+        
+        <div class="card-body d-flex flex-column align-items-start mt-3">
+          <h6 class="fw-bold card-text p-1 rounded" style="background-color: #E6E6FA;">{{ technician.user.first_name }} {{ technician.user.last_name }}</h6>
+          <h6 class="fw-bold card-text p-1 rounded" style="background-color: #b2d4ab;">{{ technician.service_type }}</h6>
+          {% comment %} <h6 class="fw-bold card-text p-1 rounded" style="background-color: #835aec;">{{ technician.service_type }}</h6> {% endcomment %}
+          <p class="card-text mt-2">{{ technician.technician_description }}</p>
+        </div>
+      </div>
+      <div class="mt-auto bottom-0 position-absolute w-100">
+        {% if technician.is_booked_status == False %}
+        <a href="{% url "bookNow" technician.id %}" class="btn btn-primary btn-block fw-bold w-100 p-2 fs-5 rounded border-0" style='background-color:#070441;'>Book Now</a>
+        {% else %}
+        <button onclick="showAlert()" class="btn btn-danger btn-block fw-bold w-100 p-2 fs-5 rounded border-0">Already Booked</button>
+        {% endif %}
+        <div class="alert alert-success show-notification" id="alertMessage" role="alert" style="display: none;">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          This technician is already booked
+         </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+</div>
+
+<!-- Pagination -->
+<div class="container">
+  <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-end">
+        {% if page_obj.has_previous %}
+    <li class="page-item m-1 border border-dark">
+        <a class="page-link bg-secondary" href="?page={{ page_obj.previous_page_number }}" tabindex="-1" aria-label="Previous">
+            <span aria-hidden="true" class='text-light fs-5 fw-bold'>&lt;</span>
+        </a>
+    </li>
+{% endif %}
+{% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+        <li class="page-item m-1 border border-dark active">
+            <span class="page-link text-dark fs-5 fw-bold">{{ num }}</span>
+        </li>
+    {% else %}
+        <li class="page-item m-1 border border-dark">
+            <a class="page-link text-dark fs-5 fw-bold" href="?page={{ num }}">{{ num }}</a>
+        </li>
+    {% endif %}
+{% endfor %}
+{% if page_obj.has_next %}
+    <li class="page-item m-1 border border-dark">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+            <span aria-hidden="true" class='text-dark fs-5 fw-bold'>&gt;</span>
+        </a>
+    </li>
+{% endif %}
+
+    
+      </ul>
+  </nav>
+</div>
+
+
+<!-- Steps -->
+<div class="container-fluid" style='background-color: #e5f1ff; height: 400px;'>
+<div class="row justify-content-evenly">
+  <h1 class='text-center mt-5 fw-bold mb-4'>Hire Technician</h1>
+  <div class="col-md-3 d-flex flex-column align-items-center">
+    <div class='m-3 rounded' style='background-color: #afe3c5; height: 80px; width: 80px;'>
+      <h1 class='text-center pt-3'>1</h1>
+    </div>
+    <h4 class='fw-bold text-center'>Select Technician
+      with service type</h4>
+  </div>
+  <div class="col-md-3 d-flex flex-column align-items-center">
+    <div class='m-3 rounded' style='background-color: #afe3c5; height: 80px; width: 80px;'>
+      <h1 class='text-center pt-3'>2</h1>
+    </div>
+    <h4 class='fw-bold text-center'>Select Prefered Time
+      Slot</h4>
+  </div>
+  <div class="col-md-3 d-flex flex-column align-items-center">
+    <div class='m-3 rounded' style='background-color: #afe3c5; height: 80px; width: 80px;'>
+      <h1 class='text-center pt-3'>3</h1>
+    </div>
+    <h4 class='fw-bold text-center'>Book Technician</h4>
+  </div>
+</div>
+</div>
+
+
+<script>
+  function showAlert() {
+      // Show the alert
+      document.getElementById("alertMessage").style.display = "block";
+      setTimeout(function() {
+        location.reload();
+      }, 3500);
+    
+  }
+</script>
+
+
+	<!-- Footer -->
+
+{% endblock  %}

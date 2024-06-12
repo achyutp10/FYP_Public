@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <style>
+      body {
+        background-color: #e5f1ff;
+      }
+  
+      .main-section {
+        padding: 40px 0;
+      }
+  
+      .user-dashboard {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 5px;
+        padding-right: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+  
+      .field-holder {
+        margin-bottom: 0;
+      }
+  
+      label {
+        display: block;
+        margin-bottom: 2px;
+      }
+  
+      input[type="text"],
+      input[type="password"],
+      input[type="email"],
+      input[type="tel"],
+      input[type="number"],
+      select[name="service_type"],
+      input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+      }
+      
+      textarea[name="service_description"],
+      textarea[name="technician_description"] {
+        width: 100%;
+        padding: 8px;
+        height: 70px !important;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+      }
+  
+      .btn input[type="submit"] {
+        background-color: #a22020 !important;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+  
+      .btn input[type="submit"]:hover {
+        background-color: #551010 !important;
+      }
+  
+      hr {
+        border-top: 1px solid #ccc;
+      }
+  
+      .alert {
+        margin-top: 20px;
+      }
+  </style>
+  
+  <div class="main-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-12">
+          <div class="user-dashboard">
+            <div class="user-holder">
+              <h4 class="text-center mb-0">WELCOME TO FIXIT</h4>
+              <p class="text-center">Please fill this form to provide service.</p>
+              <hr>
+              <div id="">
+                <form action="{% url "registerTechnician" %}" class="form-fields-set" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <ul class="">
+                    <li class="list-unstyled">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <ul class="list-unstyled">
+                            <li class="row mb-3">
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="first_name">First name</label>
+                                  {{form.first_name}}
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="last_name">Last name</label>
+                                  {{form.last_name}}
+                                </div>
+                              </div>
+                            </li>
+                            <li class="row mb-3">
+                              <div class="col-md-4">
+                                <div class="field-holder">
+                                  <label for="profile_picture">Profile Photo</label>
+                                  <input type="file" name="profile_picture" accept="image/*" onchange="readURL(this);">
+                                  {% comment %} {{form.profile_picture}} {% endcomment %}
+                                  
+                                </div>
+                              </div>
+                              <div class="col-md-2">
+                                <div class="field-holder">
+                                    <!-- Image preview -->
+                                    <img id="preview_profile_picture" class="image-preview" alt="Profile Preview" style="display: none; max-width: 60px; max-height: 60px; margin-top:32px;">
+                                </div>
+                            </div>
+                              <div class="col-md-4">
+                                <div class="field-holder">
+                                  <label for="technician_license">Technician Certificate</label>
+                                  <input type="file" name="technician_license" accept="image/*" onchange="readURL(this);">
+                                  {% comment %} {{t_form.technician_license}} {% endcomment %}
+                                </div>
+                              </div>
+                              <div class="col-md-2">
+                                <div class="field-holder">
+                                    <!-- Image preview -->
+                                    <img id="preview_technician_license" class="image-preview" alt="Technician Certificate Preview" style="display: none; max-width: 60px; max-height: 60px; margin-top:32px;">
+                                </div>
+                            </div>
+                            </li>
+                            <li class="row mb-3">
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="service_type">Service Type</label>
+                                  {{t_form.service_type}}
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="username">Username</label>
+                                  {{form.username}}
+                                </div>
+                              </div>
+                            </li>
+                            <li class="row mb-3">
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="email">Email Address</label>
+                                  {{form.email}}
+                                  <div id="email-error" class="error-message"></div>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="phone_number">Phone Number</label>
+                                  {{form.phone_number}}
+                                </div>
+                              </div>
+                            </li>
+                            <li class="row mb-3">
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="service_charge">Service Charge</label>
+                                  {{t_form.service_charge}}
+                                </div>
+                              </div>
+                              <div class="col-md-4">
+                                <div class="field-holder">
+                                  <label for="service_image">Service Image</label>
+                                  <input type="file" name="service_image" accept="image/*" onchange="readURL(this);">
+                                  {% comment %} {{t_form.service_image}} {% endcomment %}
+                                </div>
+                              </div>
+                              <div class="col-md-2">
+                                <div class="field-holder">
+                                    <!-- Image preview -->
+                                    <img id="preview_service_image" class="image-preview" alt="Technician Service Preview" style="display: none; max-width: 60px; max-height: 60px; margin-top:32px;">
+                                </div>
+                            </div>
+                            </li>
+                            <li class="row mb-3">
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="technician_description">Technician Description</label>
+                                  {{t_form.technician_description}}
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="service_description">Service Description</label>
+                                  {{t_form.service_description}}
+                                </div>
+                              </div>
+                            </li>
+                            <li class="row mb-3">
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="password">Password</label>
+                                  {{form.password}}
+                                  <div id="password-error" class="error-message"></div>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="field-holder">
+                                  <label for="confirm_password">Confirm Password</label>
+                                  {{form.confirm_password}}
+                                  <div id="confirm-password-error" class="error-message"></div>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="list-unstyled">
+                      <ul class="errorlist list-unstyled">
+                        {% for field in form %}
+                          {% if field.errors %}
+                            {% for error in field.errors %}
+                              <li style="color: red;" class="list-unstyled">{{error}}</li>
+                            {% endfor %}
+                          {% endif %}
+                        {% endfor %}
+                        <li style="color:red" class="list-unstyled">{{form.non_field_errors}}</li>
+                      </ul>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="field-holder">
+                            <div>
+                              <input type="submit" value="Register" class="btn" style="background-color: #070441; color: white;">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row list-unstyled">
+                        <div class="col-lg-12">
+                          {% comment %} load message {% endcomment %}
+                          {% include "includes/alerts.html" %}
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function readURL(input, imageId) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById(imageId).style.display = 'block';
+                document.getElementById(imageId).setAttribute('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    document.querySelector('input[name="profile_picture"]').addEventListener('change', function() {
+        readURL(this, 'preview_profile_picture');
+    });
+
+    document.querySelector('input[name="technician_license"]').addEventListener('change', function() {
+        readURL(this, 'preview_technician_license');
+    });
+
+    document.querySelector('input[name="service_image"]').addEventListener('change', function() {
+        readURL(this, 'preview_service_image');
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+      var passwordInput = document.getElementById('id_password');
+      var confirmPasswordInput = document.getElementById('id_confirm_password');
+      var emailInput = document.getElementById('id_email');
+      var passwordError = document.getElementById('password-error');
+      var confirmPasswordError = document.getElementById('confirm-password-error');
+      var emailError = document.getElementById('email-error');
+  
+      function validatePassword() {
+          var password = passwordInput.value;
+          if (password.length < 8) {
+              passwordError.textContent = 'Password must be at least 8 characters long.';
+          } else if (!password.match(/[a-zA-Z]/) || !password.match(/[0-9]/)) {
+              passwordError.textContent = 'Password must contain alphanumeric characters.';
+          } else {
+              passwordError.textContent = '';
+          }
+      }
+  
+      function validateConfirmPassword() {
+          if (confirmPasswordInput.value !== passwordInput.value) {
+              confirmPasswordError.textContent = 'Passwords do not match.';
+          } else {
+              confirmPasswordError.textContent = '';
+          }
+      }
+      function validateEmail() {
+        var email = emailInput.value;
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            emailError.textContent = 'Enter a valid email address.';
+        } else {
+            emailError.textContent = '';
+        }
+    }
+  
+      passwordInput.addEventListener('input', validatePassword);
+      confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+      emailInput.addEventListener('input', validateEmail)
+  });
+</script>
+    
+
+{% endblock  %}

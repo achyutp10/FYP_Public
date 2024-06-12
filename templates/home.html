@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<style>
+	.card {
+		padding: 40px; 
+		border: none;    }
+	
+	.card-img-top {
+		width: 170px; 
+		height: auto; 
+	}
+	
+</style>
+ <!-- Hero Section -->
+
+ <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-7" style="background-color: #e5f1ff; max-height: 270px;"> 
+			<div class='mt-5 mx-5'><h2>Welcome back!</h2></div>
+			<div>
+				<form class="d-flex mx-5" style='width: 60%;'>
+					<div class="input-group" style="padding: 2px;">
+						<input type="text" class="form-control border border-dark rounded px-2" placeholder="Search...">
+					</div>       
+				</form>
+			</div>
+		</div>
+
+		<div class="col-md-3 mx-5">
+			<img src="{% static 'images/home.png' %}" alt="" style='height: 250px; width:auto;'>
+		</div>
+	</div>
+</div>
+
+<!-- Category -->
+
+<div class='mt-4 mx-5'><h2 class='mx-3'>Explore by category</h2></div>
+
+<div class="card-group text-center">
+	<div class="card">
+		<img class="card-img-top" src="{% static 'images/plumber.jpg' %}" alt="Card image cap">
+		<div class="card-body">
+			<h5 class="card-title text-start mx-4">Plumber</h5>
+		</div>
+	</div>
+		
+		<div class="card">
+			<img class="card-img-top" src="{% static 'images/electrician.jpg' %}" alt="Electrician">
+			<div class="card-body">
+				<h5 class="card-title text-start mx-4">Electrician</h5>
+			</div>
+		</div>
+		
+		<div class="card">
+			<img class="card-img-top" src="{% static 'images/painter.jpg' %}" alt="Painter">
+			<div class="card-body">
+				<h5 class="card-title text-start mx-4">Painter</h5>
+			</div>
+		</div>
+		
+		<div class="card">
+			<img class="card-img-top" src="{% static 'images/pest.jpg' %}" alt="Pest Control">
+			<div class="card-body">
+				<h5 class="card-title text-start mx-4">Pest Control</h5>
+			</div>
+		</div>
+		
+		<div class="card">
+			<img class="card-img-top" src="{% static 'images/carpenter.jpg' %}" alt="Carpenter">
+			<div class="card-body">
+				<h5 class="card-title text-start mx-4">Carpenter</h5>
+			</div>
+		</div>
+	</div>
+
+	<!-- Data -->
+	
+	<div class='container-fluid' style='background-color: black;'>
+		<div class='row'>
+			<div class="col-md-6 mx-5 mt-3 mb-3">
+				<h3 class='text-light'>What's our superpower?</h3>
+				<h6 class='text-light'>Speed. Precision. Commitment</h6>
+				<h6 class='text-light'>We don't fix homes, we bring them to life</h6>
+			</div>
+			<div class="col-md-1 flex-column text-light text-center mt-4">
+				<h3>Top</h3>
+				<h5>Skill</h5>
+			</div>
+			<div class="col-md-2 flex-column text-light text-center mt-4">
+				<h3>365</h3>
+				<h5>Round Services</h5>
+			</div>
+			<div class="col-md-1 flex-column text-light text-center mt-4">
+				<h3>24</h3>
+				<h5>Support</h5>
+			</div>
+		</div>
+	</div>
+
+	<!-- Banner -->
+
+	<div class='container-fluid p-0' style='overflow-x: hidden; position: relative;'>
+		<div class='row'>
+			<img src="{% static 'images/homebanner.png' %}" alt="" style='max-width: 100%; height:180px;'>
+			<h3 class="position-absolute text-center top-50" style="color: white;">Your to-do list is on us!</h3>
+		</div>
+	</div>
+
+<!-- Review -->
+
+<div class='mt-4 mx-5'><h2 class='mx-3'>Customer Satisfaction</h2></div>
+	<div class="container mb-5 mt-4">
+		<div class="row">
+			
+			{% for rating in all_ratings  %}
+			
+			<div class="col-sm-6">
+				<div class="card border border-dark h-100">
+					<div class="card-body p-0">
+						<img src="{{rating.user.profile_picture.url}}" alt="" class="card-title rounded-circle mx-auto d-block" style="width: 100px; height: 100px;">
+						<p class="fw-bold card-text text-center">{{rating.feedbacks}}</p>
+						<p class='fw-bold text-center'>-{{rating.user.first_name}} {{rating.user.last_name}}</p>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			
+			<!--  -->
+		</div>
+	</div>
+
+	{% include "includes/alerts.html" %}
+
+	<!-- Footer -->
+
+
+{% endblock  %}
